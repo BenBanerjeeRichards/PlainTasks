@@ -1,21 +1,20 @@
 ## [PlainTasks](https://github.com/aziz/PlainTasks) 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8d42f3e49d104ab8bf663392661b183b)](https://www.codacy.com/app/allen-bargi/PlainTasks?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=aziz/PlainTasks&amp;utm_campaign=Badge_Grade)
 
 An opinionated todo-list plugin for Sublime Text (2 & 3) editor
 ![](http://cl.ly/image/1q100Q212o2Q/ss.png)
 
+Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTasks). 
+
 ## Installation
-To install this plugin, you have two options:
 
-1. If you have Package Control installed, simply search for `PlainTasks` to install.
+Simply search for `PlainTasks` in Package Control to install.
 
-2. Clone source code to Sublime Text packages folder.
 
 ## Start a new todo-list
-Bring up the command palette (it’s <kbd>⌘ + shift + p</kbd> in OS X and <kbd>ctrl + shift + p</kbd> in Windows) and type `task` and select `Tasks: New document` command. 
 
-**NOTE:** Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extensions or just name them `TODO` with no extension.
-For more portability you can use `todolist.txt` either as a filename or as suffix for any arbitrary filename.
+In command palette (<kbd>⌘ + shift + p</kbd>), select `Tasks: New document`
+
+**NOTE:** Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extensions, or just name them `TODO` or `todolist.txt`.
 
 ## Usage
 **NOTE:** In Windows or Linux use <kbd>ctrl</kbd> instead of <kbd>⌘</kbd>
