@@ -1,7 +1,7 @@
 ## [PlainTasks](https://github.com/aziz/PlainTasks) 
 
 An opinionated todo-list plugin for Sublime Text (2 & 3) editor
-![](http://cl.ly/image/1q100Q212o2Q/ss.png)
+![](screenshot.png)
 
 Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTasks). 
 
@@ -10,7 +10,7 @@ Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTa
 To install this fork - 
 
 1. Uninstall an existing PlainTasks installation
-2. 
+2. Run these commands in terminal
 ```sh 
 cd ~/Library/Application Support/Sublime Text 3/Packages
 git clone https://github.com/BenBanerjeeRichards/PlainTasks
