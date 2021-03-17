@@ -742,7 +742,15 @@ class PlainTasksSortByDate(PlainTasksBase):
 
             tasks_prefixed_date.sort(reverse=self.view.settings().get('new_on_top', True))
             eol = archive_pos.end()
+            prev_date = None
+            do_split_archived = self.view.settings().get('split_archived_by_date', False)
             for a in tasks_prefixed_date:
+                if do_split_archived:
+                    date = a.split(")")[0].split(" ")[0].replace("(", "")
+                    if prev_date is not None and prev_date != date:
+                        eol += self.view.insert(edit, eol, "\n")
+                    prev_date = date
+
                 eol += self.view.insert(edit, eol, u'\n' + re.sub(r'^\([\d\w,\.:\-\/ ]*\)([^\b]*$)', u'\\1', a))
         else:
             sublime.status_message("Nothing to sort")
