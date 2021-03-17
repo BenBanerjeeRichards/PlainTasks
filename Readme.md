@@ -7,7 +7,16 @@ Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTa
 
 ## Installation
 
-Simply search for `PlainTasks` in Package Control to install.
+To install this fork - 
+
+1. Uninstall an existing PlainTasks installation
+2. 
+```sh 
+cd ~/Library/Application Support/Sublime Text 3/Packages
+git clone https://github.com/BenBanerjeeRichards/PlainTasks
+```
+
+Alternatively, simply search for `PlainTasks` in Package Control to install. This **does not** include the features added by this fork
 
 
 ## Start a new todo-list
