@@ -183,7 +183,7 @@ Here is a list of PlainTasks’ specific settings:
 | **project_tag**                | true             | Postfix archived task with project tag, otherwise prefix                |
 | **archive_name**               | `Archive:`       | Make sure it is the unique project name within your todo files          |
 | **new_on_top**                 | true             | How to sort archived tasks (done_tag=true and default date_format are required)|
-| **new_on_top**                 | true             | Split archived tasks with a blank line on date (done_tag=true, default date_format and new_on_top=true are required)|
+| **split_archived_by_date**                 | true             | Split archived tasks with a blank line on date (done_tag=true, default date_format and new_on_top=true are required)|
 | **header_to_task**             | false            | If true, a project title line will be converted to a task on the certain keystroke  |
 | **decimal_minutes**            | false            | If true, minutes in lasted/wasted tags will be percent of hour, e.g. 1.50 instead of 1:30 |
 | **tasks_bullet_space**         | whitespace or tab | String to place after bullet, might be any character(s)                |
