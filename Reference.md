@@ -1,31 +1,3 @@
-## [PlainTasks](https://github.com/aziz/PlainTasks) 
-
-An opinionated todo-list plugin for Sublime Text (2 & 3) editor
-![](screenshot.png)
-
-Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTasks), with the following modifications 
-
-* Option to split archived tasks by date. This makes it easier to scan the archive list. Enable by setting `split_archived_by_date` to true
-* Open tickets in JIRA. Press <kbd>⌘ + control + u</kbd> whilst your cursor is over a JIRA ticket number to open that ticket in your web browser. Set  `jira_domain` to, for example, `jira.example.com`. 
-
-## Installation
-
-To install this fork - 
-
-1. Uninstall an existing PlainTasks installation
-2. Run the following (on other platforms , change the Sublime user path as appropiate) - 
-```sh 
-cd ~/Library/Application Support/Sublime Text 3/Packages && git clone https://github.com/BenBanerjeeRichards/PlainTasks
-```
-
-
-
-## Start a new todo-list
-
-In command palette (<kbd>⌘ + shift + p</kbd>), select `Tasks: New document`
-
-Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extensions, or just name them `TODO` or `todolist.txt`.
-
 ## Usage
 **NOTE:** In Windows or Linux use <kbd>ctrl</kbd> instead of <kbd>⌘</kbd>
 
@@ -36,6 +8,8 @@ Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extens
 * <kbd>ctrl + c</kbd>: toggle task as cancelled on Mac. <kbd>alt + c</kbd> on Windows/Linux.
 
 * <kbd>⌘ + shift + a</kbd> will archive the done tasks, by removing them from your list and appending them to the bottom of the file under Archive project
+
+* <kbd>⌘ + shift + o</kbd> will archive in Org-Mode style, removing the entire subtree after cursor and appending it to new file next to original one, e.g. if original is `filename.TODO` then new would be `filename_archive.TODO`
 
 * <kbd>⌘ + shift + u</kbd> will open the url under the cursor in your default browser, other than http(s) schemes must be enclosed within `<>`, e.g. `<skype:nickname>`
 
@@ -51,9 +25,11 @@ Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extens
 
 * Completion rules (<kbd>ctrl+space</kbd> or <kbd>alt+/</kbd> to see list of them):  
 
-- type `t`, press <kbd>tab</kbd> — it’ll become `@today` — this one is highlighted differently than other tags. Other tasks (also completed from their first letters) are `@critical`, `@high`, `@low` and `@started`
-
-- After inserting`@started`, press <kbd>tab</kbd> again and current date will be inserted, when you’ll complete or cancel a task with such tag, you’ll know how many time has passed since start; if you have to change done/cancelled/started time, then you can recalculate the time spent on task by pressing <kbd>tab</kbd> while cursor is placed on a tag;
+- type `t`, press <kbd>tab</kbd> — it’ll become `@today` — this one is highlighted differently than other tags;
+- `c`, <kbd>tab</kbd> — `@critical`;
+- `h`, <kbd>tab</kbd> — `@high`;
+- `l`, <kbd>tab</kbd> — `@low`;
+- `s`, <kbd>tab</kbd> — `@started` — press <kbd>tab</kbd> again and current date will be inserted, when you’ll complete or cancel a task with such tag, you’ll know how many time has passed since start; if you have to change done/cancelled/started time, then you can recalculate the time spent on task by pressing <kbd>tab</kbd> while cursor is placed on a tag;
 - `tg`, <kbd>tab</kbd>, <kbd>tab</kbd> work in the same manner as `s`, but inserts `@toggle(current date)` — so you can pause and resume to get more correct result when done/cancel; each toggle tag is either pause or resume depending on its place in sequence;
 - `cr`, <kbd>tab</kbd>, <kbd>tab</kbd> — `@created(current date)` (<kbd>⌘ + shift + enter</kbd> creates a new task with this tag);
 - `d`, <kbd>tab</kbd> — `@due( )`  
@@ -132,8 +108,29 @@ Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extens
         </table>
 
 * You can create a link to a file within your project by prefixing the file name with a dot and (back)slash like: `.\filename\` or `./another filename/`.  
-* Org Mode and Markdown styles also supported - see the [Reference.md](Reference.md)
+  The line and column can be specified by colons: `.\filename:11:8`.  
+  In SublimeText 3 you can specify a symbol inside that file by using \> character like: `.\filename>symbol`.  
+  In SublimeText 2 you can specify a text inside that file by using inch characters like: `.\filename"any text"`.  
+  Pressing <kbd>ctrl + o</kbd> (<kbd>alt + o</kbd> on Windows/Linux) will open the file in Sublime and scroll to specific position if any.  
+  Also in SublimeText 3 link may point to directory, open such link will add the directory to current project (sidebar).  
+  In addition, Markdown and “wiki” (Org-Mode, NV, etc.) styles are supported as well, examples:
 
+```
+[](path)
+[](path ":11:8")
+[](path ">symbol")
+[](path "any text")
+[[path]]
+[[path::11:8]]
+[[path::*symbol]]
+[[path::any text]]
+[[path]] ":11:8"
+[[path]] ">symbol"
+[[path]] "any text"
+```
+
+* To convert current document to HTML, bring up the command palette <kbd>⌘ + shift + p</kbd> and type `Tasks: View as HTML` — it will be opened in default webbrowser, so you can view and save it.  
+`Tasks: Save as HTML…` ask if you want to save and if yes, allow to choose directory and filename (but won’t open it in webbrowser).
 
 ### Editor Useful Tools:
 
@@ -143,45 +140,3 @@ Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extens
 
 
 ★ See the [Tutorial](https://github.com/aziz/PlainTasks/blob/master/messages/Tutorial.todo) for more detailed information.
-
-For more in-depth documentation, see [Reference.md](Reference.md)
-
-### Customisation
-View [Customisation.md](Customisation.md) for more information 
-
-
-
-
-## PlainTasks for other editors
-NOTE: These are separate projects, maintained by some awesome developers other than us.
-- [Atom: Tasks plugin](https://atom.io/packages/tasks)
-- [Vim: Plaintasks.vim](https://github.com/elentok/plaintasks.vim)
-- [Visual Studio Code: To Do Tasks](https://github.com/sandy081/vscode-todotasks)
-- [Visual Studio Code: Todo+](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-todo-plus)
-
-
-## Contributors
-- @antonioriva
-- @binaryannie
-- [Ben Johnson](https://github.com/benjohnson)
-- [Craig Campbell](https://github.com/ccampbell)
-- [Dominique Wahli](https://github.com/bizoo)
-- [Germán M. Bravo](https://github.com/Kronuz)
-- [Hindol Adhya](https://github.com/Hindol)
-- [Jesse Robertson](https://github.com/speilberg0)
-- [Marc Schlaich](https://github.com/schlamar)
-- [Michael McFarland](https://github.com/mikedmcfarland)
-- [Pablo Barrios](https://github.com/sauron)
-- [Stanislav Parfeniuk](https://github.com/travmik)
-- [Vova Kolobok](https://github.com/vovkkk)
-
-You can contribute on [github](https://github.com/aziz/PlainTasks)
-
-
-## Inspiration
-- Thanks to Chagel for the [iTodo plugin](https://github.com/chagel/itodo).  
-- Thanks to [Taskmate for TextMate](https://github.com/svenfuchs/taskmate).
-- Thanks to [TaskPaper Mac application from hogbaysoftware.com](http://www.hogbaysoftware.com/products/taskpaper)
-
-## License
-Copyright 2012-2013 [Allen Bargi](https://twitter.com/aziz). Licensed under the MIT License
