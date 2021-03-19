@@ -343,6 +343,7 @@ class PlainTasksArchiveCommand(PlainTasksBase):
             # adding tasks to archive section
             for task in all_tasks:
                 line_content = self.view.substr(task)
+
                 match_task = re.match(r'^\s*(\[[x-]\]|.)(\s+.*$)', line_content, re.U)
                 current_scope = self.view.scope_name(task.a)
                 if rds in current_scope or rcs in current_scope:
@@ -425,6 +426,7 @@ class PlainTasksArchiveCommand(PlainTasksBase):
 
         all_tasks = done_tasks + canc_tasks
         all_tasks.sort()
+
         return all_tasks
 
     def get_archivable_tasks_within_selections(self):
@@ -460,6 +462,7 @@ class PlainTasksOpenUrlCommand(sublime_plugin.TextCommand):
     #It is horrible regex but it works perfectly
     URL_REGEX = r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))
         +(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))"""
+    JIRA_REGEX = r'[^\s]+-\d+'
 
     def run(self, edit):
         s = self.view.sel()[0]
@@ -478,7 +481,39 @@ class PlainTasksOpenUrlCommand(sublime_plugin.TextCommand):
             else:
                 webbrowser.open_new_tab(url)
         else:
-            self.search_bare_weblink_and_open(start, end)
+            if not self.search_bare_weblink_and_open(start, end):
+                self.search_bare_jira_and_open(start, end)
+            # sublime.status_message("Looks like there is nothing to open")
+
+    def search_bare_jira_and_open(self, start, end):
+        view_size = self.view.size()
+        stopSymbols = ['\t', ' ', '\"', '\'', '>', '<', ',']
+        # move the selection back to the start of the url
+        while (start > 0
+                and not self.view.substr(start - 1) in stopSymbols
+                and self.view.classify(start) & sublime.CLASS_LINE_START == 0):
+            start -= 1
+
+        # move end of selection forward to the end of the url
+        while (end < view_size
+                and not self.view.substr(end) in stopSymbols
+                and self.view.classify(end) & sublime.CLASS_LINE_END == 0):
+            end += 1
+        possible_ticket_code = self.view.substr(sublime.Region(start, end))
+        ticket_search = re.search(self.JIRA_REGEX, possible_ticket_code, re.X)
+        if ticket_search:
+            self._open_jira_in_browser(ticket_search.group(0))
+            return True
+        return False
+
+    def _open_jira_in_browser(self, ticket):
+        jira_domain = self.view.settings().get("jira_domain", None)
+        if not jira_domain:
+            return
+        
+        url = "https://" + jira_domain + "/browse/" + ticket
+        webbrowser.open(url)
+
 
     def search_bare_weblink_and_open(self, start, end):
         # expand selection to nearest stopSymbols
@@ -507,9 +542,9 @@ class PlainTasksOpenUrlCommand(sublime_plugin.TextCommand):
             if strUrl.find("://") == -1:
                 strUrl = "http://" + strUrl
             webbrowser.open_new_tab(strUrl)
+            return True
         else:
-            sublime.status_message("Looks like there is nothing to open")
-
+            return False
 
 class PlainTasksOpenLinkCommand(sublime_plugin.TextCommand):
     LINK_PATTERN = re.compile(  # simple ./path/
@@ -689,6 +724,7 @@ class PlainTasksOpenLinkCommand(sublime_plugin.TextCommand):
         match_link = self.LINK_PATTERN.search(line)
         match_md   = self.MD_LINK.search(line)
         match_wiki = self.WIKI_LINK.search(line)
+        jira_link = self.JIRA_LINK.search(line)
         if match_link:
             fn, sym, line, col, text = match_link.group('fn', 'sym', 'line', 'col', 'text')
         elif match_md:
@@ -705,11 +741,16 @@ class PlainTasksOpenLinkCommand(sublime_plugin.TextCommand):
             fn   = (fn.replace('\\[', '[').replace('\\]', ']'))
             if text:
                 text = (text.replace('\\[', '[').replace('\\]', ']'))
+
         return fn, sym, line or 0, col or 0, text
 
 
 class PlainTasksSortByDate(PlainTasksBase):
+
+
     def runCommand(self, edit):
+        do_split_archived = self.view.settings().get('split_archived_by_date', False)
+        archive_dividor = "\n---- ✄ -----------------------"
         if not re.search(r'(?su)%[Yy][-./ ]*%m[-./ ]*%d\s*%H.*%M', self.date_format):
             # TODO: sort with dateutil so we wont depend on specific date_format
             return
@@ -718,13 +759,17 @@ class PlainTasksSortByDate(PlainTasksBase):
             have_date = r'(^\s*[^\n]*?\s\@(?:done|cancelled)\s*(\([\d\w,\.:\-\/ ]*\))[^\n]*$)'
             all_tasks_prefixed_date = []
             all_tasks = self.view.find_all(have_date, 0, u"\\2\\1", all_tasks_prefixed_date)
-
+            all_dividors = self.view.find_all(archive_dividor) if do_split_archived else []
             tasks_prefixed_date = []
             tasks = []
+            divisors = []
             for ind, task in enumerate(all_tasks):
                 if task.a > archive_pos.b:
                     tasks.append(task)
                     tasks_prefixed_date.append(all_tasks_prefixed_date[ind])
+            for dividor in all_dividors:
+                if dividor.a > archive_pos.b:
+                    divisors.append(dividor)
 
             notes = []
             for ind, task in enumerate(tasks):
@@ -735,22 +780,21 @@ class PlainTasksSortByDate(PlainTasksBase):
                     tasks_prefixed_date[ind] += u'\n' + self.view.substr(note)
                     note_line = note.end() + 1
 
-            to_remove = tasks+notes
+            to_remove = tasks+notes+divisors
             to_remove.sort()
+
             for i in reversed(to_remove):
                 self.view.erase(edit, self.view.full_line(i))
 
             tasks_prefixed_date.sort(reverse=self.view.settings().get('new_on_top', True))
             eol = archive_pos.end()
             prev_date = None
-            do_split_archived = self.view.settings().get('split_archived_by_date', False)
             for a in tasks_prefixed_date:
                 if do_split_archived:
                     date = a.split(")")[0].split(" ")[0].replace("(", "")
                     if prev_date is not None and prev_date != date:
-                        eol += self.view.insert(edit, eol, "\n")
+                        eol += self.view.insert(edit, eol, archive_dividor)
                     prev_date = date
-
                 eol += self.view.insert(edit, eol, u'\n' + re.sub(r'^\([\d\w,\.:\-\/ ]*\)([^\b]*$)', u'\\1', a))
         else:
             sublime.status_message("Nothing to sort")

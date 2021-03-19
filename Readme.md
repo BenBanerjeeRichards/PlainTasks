@@ -3,20 +3,21 @@
 An opinionated todo-list plugin for Sublime Text (2 & 3) editor
 ![](screenshot.png)
 
-Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTasks). 
+Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTasks), with the following modifications 
+
+* Option to split archived tasks by date. This makes it easier to scan the archive list. Enable by setting `split_archived_by_date` to true
+* Open tickets in JIRA. Press <kbd>⌘ + control + up/down</kbd> whilst your cursor is over a JIRA ticket number to open that ticket in your web browser. Set  `jira_domain` to, for example, `jira.example.com`. 
 
 ## Installation
 
 To install this fork - 
 
 1. Uninstall an existing PlainTasks installation
-2. Run these commands in terminal
+2. Run the following (on other platforms , change the Sublime user path as appropiate) - 
 ```sh 
-cd ~/Library/Application Support/Sublime Text 3/Packages
-git clone https://github.com/BenBanerjeeRichards/PlainTasks
+cd ~/Library/Application Support/Sublime Text 3/Packages && git clone https://github.com/BenBanerjeeRichards/PlainTasks
 ```
 
-Alternatively, simply search for `PlainTasks` in Package Control to install. This **does not** include the features added by this fork
 
 
 ## Start a new todo-list
@@ -181,37 +182,38 @@ Here is a list of PlainTasks’ specific settings:
 
 |            Setting             |     Default      |                                 Options/Description                                 |
 | ------------------------------ | ---------------- | ----------------------------------------------------------------------- |
-| **open_tasks_bullet**          | `☐`              | `-` `❍` `❑` `■` `□` `☐` `▪` `▫` `–` `—` `≡` `→` `›` `[ ]`             |
-| **done_tasks_bullet**          | `✔`              | `✓` `☑` `+` `[x]`                                                      |
-| **cancelled_tasks_bullet**     | `✘`              | `x` `[-]`                                                               |
-| **date_format**                | `(%y-%m-%d %H:%M)` | See [strfti.me](http://www.strfti.me/) for quick reference; detailed documentation: [ST2](https://docs.python.org/2.6/library/datetime.html#strftime-and-strptime-behavior), [ST3](https://docs.python.org/3.3/library/datetime.html#strftime-and-strptime-behavior) |
-| **done_tag**                   | true             | Determines whether done tasks should gain a `@done` tag or not          |
-| **done_date**                  | true             | Determines whether done tasks should gain a date or not                 |
-| **before_tasks_bullet_margin** | 1                | Determines the number of spaces (default indent) before the task bullet |
-| **project_tag**                | true             | Postfix archived task with project tag, otherwise prefix                |
-| **archive_name**               | `Archive:`       | Make sure it is the unique project name within your todo files          |
-| **new_on_top**                 | true             | How to sort archived tasks (done_tag=true and default date_format are required)|
-| **split_archived_by_date**                 | true             | Split archived tasks with a blank line on date (done_tag=true, default date_format and new_on_top=true are required)|
-| **header_to_task**             | false            | If true, a project title line will be converted to a task on the certain keystroke  |
-| **decimal_minutes**            | false            | If true, minutes in lasted/wasted tags will be percent of hour, e.g. 1.50 instead of 1:30 |
-| **tasks_bullet_space**         | whitespace or tab | String to place after bullet, might be any character(s)                |
-| **highlight_past_due**         | true             | If true, highlight past, soon, and invalid `@due(something)`            |
-| **highlight_due_soon**         | 24               | Hours as int, threshold to define which `@due` will be soon             |
-| **scope_past_due**             | `string.other.tag.todo.critical` | Any scope, define color for past `@due`                 |
-| **scope_due_soon**             | `string.other.tag.todo.high`     | Any scope, define color for `@due` will be soon         |
-| **scope_misformatted**         | `string.other.tag.todo.low`      | Any scope, define color for `@due` mismatch **date_format** |
-| **icon_past_due**              | `"circle"`       | Gutter icon¹                                                            |
-| **icon_due_soon**              | `"dot"`          | Gutter icon¹                                                            |
-| **icon_misformatted**          | `""`             | Gutter icon¹                                                            |
-| **icon_critical**              | `""`             | Gutter icon¹                                                            |
-| **icon_high**                  | `""`             | Gutter icon¹                                                            |
-| **icon_low**                   | `""`             | Gutter icon¹                                                            |
-| **icon_today**                 | `""`             | Gutter icon¹                                                            |
-| **show_remain_due**            | false            | In Sublime 3, show remain or overdue time under due tags                |
-| **show_calendar_on_tags**      | false            | In Sublime 3, if true, automatically show date picker when cursor is on tag (you can get date picker any time via context menu) |
-| **due_preview_offset**         | 0                | Place preview date outside of parens of `@due()`, 1 — within            |
-| **due_remain_format**          | `"{time} remaining"` | `{time}` will be replaced with actual value                         |
-| **due_overdue_format**         | `"{time} overdue"` | `{time}` will be replaced with actual value                           |
+| open_tasks_bullet          | `☐`              | `-` `❍` `❑` `■` `□` `☐` `▪` `▫` `–` `—` `≡` `→` `›` `[ ]`             |
+| done_tasks_bullet          | `✔`              | `✓` `☑` `+` `[x]`                                                      |
+| cancelled_tasks_bullet     | `✘`              | `x` `[-]`                                                               |
+| date_format                | `(%y-%m-%d %H:%M)` | See [strfti.me](http://www.strfti.me/) for quick reference; detailed documentation: [ST2](https://docs.python.org/2.6/library/datetime.html#strftime-and-strptime-behavior), [ST3](https://docs.python.org/3.3/library/datetime.html#strftime-and-strptime-behavior) |
+| done_tag                   | true             | Determines whether done tasks should gain a `@done` tag or not          |
+| done_date                  | true             | Determines whether done tasks should gain a date or not                 |
+| before_tasks_bullet_margin | 1                | Determines the number of spaces (default indent) before the task bullet |
+| project_tag                | true             | Postfix archived task with project tag, otherwise prefix                |
+| archive_name               | `Archive:`       | Make sure it is the unique project name within your todo files          |
+| new_on_top                 | true             | How to sort archived tasks (done_tag=true and default date_format are required)|
+| **split_archived_by_date**                 | true             | Split archived tasks by date, using a dividor (done_tag=true, default date_format and new_on_top=true are required)|
+| **jira_domain**                 |              | Set domain to open JIRA tickets at. Do not include `https://`. |
+| header_to_task             | false            | If true, a project title line will be converted to a task on the certain keystroke  |
+| decimal_minutes            | false            | If true, minutes in lasted/wasted tags will be percent of hour, e.g. 1.50 instead of 1:30 |
+| tasks_bullet_space         | whitespace or tab | String to place after bullet, might be any character(s)                |
+| highlight_past_due         | true             | If true, highlight past, soon, and invalid `@due(something)`            |
+| highlight_due_soon         | 24               | Hours as int, threshold to define which `@due` will be soon             |
+| scope_past_due             | `string.other.tag.todo.critical` | Any scope, define color for past `@due`                 |
+| scope_due_soon             | `string.other.tag.todo.high`     | Any scope, define color for `@due` will be soon         |
+| scope_misformatted         | `string.other.tag.todo.low`      | Any scope, define color for `@due` mismatch **date_format** |
+| icon_past_due              | `"circle"`       | Gutter icon¹                                                            |
+| icon_due_soon              | `"dot"`          | Gutter icon¹                                                            |
+| icon_misformatted          | `""`             | Gutter icon¹                                                            |
+| icon_critical              | `""`             | Gutter icon¹                                                            |
+| icon_high                  | `""`             | Gutter icon¹                                                            |
+| icon_low                   | `""`             | Gutter icon¹                                                            |
+| icon_today                 | `""`             | Gutter icon¹                                                            |
+| show_remain_due            | false            | In Sublime 3, show remain or overdue time under due tags                |
+| show_calendar_on_tags      | false            | In Sublime 3, if true, automatically show date picker when cursor is on tag (you can get date picker any time via context menu) |
+| due_preview_offset         | 0                | Place preview date outside of parens of `@due()`, 1 — within            |
+| due_remain_format          | `"{time} remaining"` | `{time}` will be replaced with actual value                         |
+| due_overdue_format         | `"{time} overdue"` | `{time}` will be replaced with actual value                           |
 
 <b>¹</b> Icon value can be  `"dot"`, `"circle"`, `"bookmark"`, `"cross"`, `""`, or custom relative path to existing png file,
 e.g. `"Packages/User/my-icon.png"`.
