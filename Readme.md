@@ -6,7 +6,7 @@ An opinionated todo-list plugin for Sublime Text (2 & 3) editor
 Forked from [https://github.com/aziz/PlainTasks](https://github.com/aziz/PlainTasks), with the following modifications 
 
 * Option to split archived tasks by date. This makes it easier to scan the archive list. Enable by setting `split_archived_by_date` to true
-* Open tickets in JIRA. Press <kbd>⌘ + control + up/down</kbd> whilst your cursor is over a JIRA ticket number to open that ticket in your web browser. Set  `jira_domain` to, for example, `jira.example.com`. 
+* Open tickets in JIRA. Press <kbd>⌘ + control + u</kbd> whilst your cursor is over a JIRA ticket number to open that ticket in your web browser. Set  `jira_domain` to, for example, `jira.example.com`. 
 
 ## Installation
 
