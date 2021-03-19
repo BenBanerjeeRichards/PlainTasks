@@ -144,6 +144,12 @@ Save your todo files with `todo`, `todolist`, `tasks` or `taskpaper` file extens
 
 ★ See the [Tutorial](https://github.com/aziz/PlainTasks/blob/master/messages/Tutorial.todo) for more detailed information.
 
+For more in-depth documentation, see [Reference.md](Reference.md)
+
+### Customisation
+View [Customisation.md](Customisation.md) for more information 
+
+
 
 
 ## PlainTasks for other editors
