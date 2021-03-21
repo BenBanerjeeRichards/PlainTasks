@@ -72,6 +72,10 @@ def check_parentheses(date_format, regex_group, is_date=False):
             parentheses = regex_group
     return parentheses
 
+def is_empty_line(view, region):
+    text = view.substr(view.line(region))
+    return len(text.strip()) == 0
+
 
 class PlainTasksNewCommand(PlainTasksBase):
     def runCommand(self, edit):
@@ -319,6 +323,7 @@ class PlainTasksArchiveCommand(PlainTasksBase):
     def runCommand(self, edit, partial=False):
         rds = 'meta.item.todo.completed'
         rcs = 'meta.item.todo.cancelled'
+        should_keep_notes_indent = self.view.settings().get("archive_keep_note_indent", True)
 
         # finding archive section
         archive_pos = self.view.find(self.archive_name, 0, sublime.LITERAL)
@@ -361,7 +366,7 @@ class PlainTasksArchiveCommand(PlainTasksBase):
                             (u'%s%s:' % (self.tasks_bullet_space, pr)) if pr else '',
                             match_task.group(2))  # very task
                 else:
-                    eol = u'{0}{1}\n'.format(self.before_tasks_bullet_spaces * 2, line_content.lstrip())
+                    eol = u'{0}{1}\n'.format(self.before_tasks_bullet_spaces * 2, line_content if should_keep_notes_indent else line_content.lstrip())
                 line += self.view.insert(edit, line, eol)
 
             # remove moved tasks (starting from the last one otherwise it screw up regions after the first delete)
@@ -408,23 +413,26 @@ class PlainTasksArchiveCommand(PlainTasksBase):
             return hierarhProject
 
     def get_task_note(self, task, tasks):
+        note_lines = []
         note_line = task.end() + 1
-        while self.view.scope_name(note_line) == 'text.todo notes.todo ':
+        while self.view.scope_name(note_line) == 'text.todo notes.todo ' or is_empty_line(self.view, note_line):
             note = self.view.line(note_line)
             if note not in tasks:
-                tasks.append(note)
+                note_lines.append(note)
             note_line = self.view.line(note_line).end() + 1
+        return note_lines
 
     def get_all_archivable_tasks(self, archive_pos, rds, rcs):
         done_tasks = [i for i in self.view.find_by_selector(rds) if i.a < (archive_pos.a if archive_pos and archive_pos.a > 0 else self.view.size())]
+        all_notes = []
         for i in done_tasks:
-            self.get_task_note(i, done_tasks)
+            all_notes = all_notes + self.get_task_note(i, done_tasks)
 
         canc_tasks = [i for i in self.view.find_by_selector(rcs) if i.a < (archive_pos.a if archive_pos and archive_pos.a > 0 else self.view.size())]
         for i in canc_tasks:
-            self.get_task_note(i, canc_tasks)
+            all_notes = all_notes = self.get_task_note(i, canc_tasks)
 
-        all_tasks = done_tasks + canc_tasks
+        all_tasks = done_tasks + canc_tasks + all_notes
         all_tasks.sort()
 
         return all_tasks
@@ -772,13 +780,15 @@ class PlainTasksSortByDate(PlainTasksBase):
                     divisors.append(dividor)
 
             notes = []
+            view_size = self.view.size()
             for ind, task in enumerate(tasks):
                 note_line = task.end() + 1
-                while self.view.scope_name(note_line) == 'text.todo notes.todo ':
+                while note_line < view_size  and (self.view.scope_name(note_line) == 'text.todo notes.todo ' or is_empty_line(self.view, note_line)):
                     note = self.view.line(note_line)
                     notes.append(note)
                     tasks_prefixed_date[ind] += u'\n' + self.view.substr(note)
                     note_line = note.end() + 1
+
 
             to_remove = tasks+notes+divisors
             to_remove.sort()
@@ -795,7 +805,7 @@ class PlainTasksSortByDate(PlainTasksBase):
                     if prev_date is not None and prev_date != date:
                         eol += self.view.insert(edit, eol, archive_dividor)
                     prev_date = date
-                eol += self.view.insert(edit, eol, u'\n' + re.sub(r'^\([\d\w,\.:\-\/ ]*\)([^\b]*$)', u'\\1', a))
+                eol += self.view.insert(edit, eol, u'\n' + re.sub(r'^\([\d\w,\.:\-\/ ]*\)([^\b]*$)', u'\\1', a.rstrip().lstrip()))
         else:
             sublime.status_message("Nothing to sort")
 
